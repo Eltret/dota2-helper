@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dota 2 Helper</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--card:#1a2236;--card2:#222d45;--red:#e74c3c;--gold:#f0b232;--green:#2ecc71;--blue:#3498db;--cyan:#00d4ff;--txt:#e8e6e3;--txt2:#8892a4;--txt3:#5a6478;--brd:#2a3550}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Exo 2',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(0,212,255,.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(231,76,60,.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;max-width:420px;margin:0 auto;min-height:100vh;padding-bottom:68px}
+.header{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--brd);background:linear-gradient(180deg,rgba(10,14,26,.97),rgba(10,14,26,.85));backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.header-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--red),#c0392b);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:900;font-size:13px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);box-shadow:0 3px 12px rgba(231,76,60,.3)}
+.header h1{font-family:'Orbitron';font-size:15px;font-weight:700;letter-spacing:1px}
+.header span{font-size:11px;color:var(--txt2)}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;display:flex;background:rgba(17,24,39,.96);backdrop-filter:blur(15px);border-top:1px solid var(--brd);z-index:100;padding:2px 0 4px}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;background:none;border:none;color:var(--txt3);font-family:'Exo 2';font-size:10px;font-weight:600;cursor:pointer;transition:.3s;position:relative}
+.nb.a{color:var(--cyan)}.nb.a::before{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--cyan);border-radius:0 0 2px 2px;box-shadow:0 0 8px var(--cyan)}
+.ni{font-size:18px}
+.page{display:none;padding:16px 12px;animation:fi .25s ease}.page.a{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.st{font-family:'Orbitron';font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.pb{margin-left:auto;background:var(--red);color:#fff;padding:2px 8px;border-radius:20px;font-family:'Orbitron';font-size:10px;font-weight:700;box-shadow:0 2px 8px rgba(231,76,60,.3)}
+.hg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:20px}
+.hc{border-radius:8px;overflow:hidden;cursor:pointer;transition:.25s;border:1px solid transparent;background:var(--card)}.hc:active{transform:scale(.95)}
+.ha{width:100%;aspect-ratio:1.7;overflow:hidden;background:var(--card)}
+.ha img{width:100%;height:100%;object-fit:cover}
+.hn{font-size:7.5px;text-align:center;padding:1px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt2);font-weight:600}
+.hw{font-size:10px;font-weight:700;text-align:center;padding:2px 0 3px}
+.hw.h{color:var(--green)}.hw.m{color:var(--gold)}.hw.l{color:var(--red)}
+.rf{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap}
+.rb{padding:5px 12px;border-radius:20px;border:1px solid var(--brd);background:var(--card);color:var(--txt2);font-family:'Exo 2';font-size:11px;font-weight:600;cursor:pointer;transition:.3s}
+.rb.a{background:var(--cyan);color:var(--bg);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,212,255,.25)}
+.hs{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-family:'Exo 2';font-size:14px;outline:none;margin-bottom:10px;transition:.3s}
+.hs:focus{border-color:var(--cyan);box-shadow:0 0 10px rgba(0,212,255,.12)}.hs::placeholder{color:var(--txt3)}
+.tr{display:flex;gap:6px;margin-bottom:10px;align-items:center}
+.tl{font-family:'Orbitron';font-size:9px;font-weight:700;letter-spacing:1px;width:44px;text-align:center;padding:4px 2px;border-radius:6px}
+.tl.r{color:var(--green);background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25)}
+.tl.d{color:var(--red);background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25)}
+.ps{display:flex;gap:5px;flex:1}
+.sl{width:46px;height:46px;border-radius:8px;border:2px dashed var(--brd);display:flex;align-items:center;justify-content:center;color:var(--txt3);cursor:pointer;transition:.3s;background:var(--card);position:relative;overflow:hidden;font-size:18px}
+.sl:hover{border-color:var(--cyan)}.sl.f{border-style:solid;border-color:var(--cyan);padding:0}
+.sl.f img{width:100%;height:100%;object-fit:cover}
+.sl .x{position:absolute;top:-1px;right:-1px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:10px;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2}
+.sl.f .x{display:flex}
+.sg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-height:220px;overflow-y:auto;padding:2px;margin-bottom:14px}
+.sg::-webkit-scrollbar{width:3px}.sg::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
+.sp{aspect-ratio:1.7;border-radius:5px;border:1px solid var(--brd);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;overflow:hidden;padding:0}
+.sp:hover{border-color:var(--cyan);transform:scale(1.08)}.sp.pk{opacity:.2;pointer-events:none}
+.sp img{width:100%;height:100%;object-fit:cover}
+.rec{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--brd);margin-top:12px}
+.rct{font-family:'Orbitron';font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.rh{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(42,53,80,.5)}.rh:last-child{border-bottom:none}
+.ri{width:36px;height:36px;border-radius:6px;overflow:hidden;flex-shrink:0}.ri img{width:100%;height:100%;object-fit:cover}
+.rn{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr{font-size:10px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rw{font-weight:700;font-size:13px;color:var(--green);flex-shrink:0}
+.mt{display:flex;gap:3px;background:var(--card);border-radius:10px;padding:3px;margin-bottom:14px;border:1px solid var(--brd)}
+.mb{flex:1;padding:7px;border-radius:8px;border:none;background:transparent;color:var(--txt2);font-family:'Exo 2';font-size:12px;font-weight:600;cursor:pointer;transition:.3s}
+.mb.a{background:var(--cyan);color:var(--bg);box-shadow:0 2px 8px rgba(0,212,255,.25)}
+.qc{background:var(--card);border-radius:14px;padding:20px 16px;border:1px solid var(--brd)}
+.qp{display:flex;gap:3px;margin-bottom:16px}.qd{flex:1;height:3px;border-radius:2px;background:var(--brd);transition:.3s}
+.qd.dn{background:var(--cyan);box-shadow:0 0 6px rgba(0,212,255,.3)}.qd.cu{background:var(--gold);box-shadow:0 0 6px rgba(240,178,50,.3)}
+.qq{font-size:15px;font-weight:700;margin-bottom:16px;line-height:1.4}
+.qo{display:block;width:100%;padding:12px 14px;margin-bottom:7px;border-radius:10px;border:1px solid var(--brd);background:var(--bg2);color:var(--txt);font-family:'Exo 2';font-size:13px;font-weight:500;text-align:left;cursor:pointer;transition:.3s}
+.qo:hover{border-color:var(--cyan);background:var(--card2);transform:translateX(3px)}.qo:active{transform:scale(.97)}
+.qres{text-align:center}
+.qrh{width:100px;height:60px;border-radius:10px;overflow:hidden;margin:0 auto 12px;box-shadow:0 4px 20px rgba(0,212,255,.2)}.qrh img{width:100%;height:100%;object-fit:cover}
+.qrn{font-family:'Orbitron';font-size:20px;font-weight:900;margin-bottom:6px;background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.qrd{color:var(--txt2);font-size:13px;line-height:1.5;margin-bottom:16px}
+.qrb{padding:10px 28px;border-radius:25px;border:none;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff;font-family:'Orbitron';font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;box-shadow:0 3px 15px rgba(0,212,255,.3)}
+.wb{background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(231,76,60,.08));border:1px solid var(--brd);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center}
+.wb h2{font-family:'Orbitron';font-size:16px;margin-bottom:4px}.wb p{color:var(--txt2);font-size:12px}
+.ag{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.ac{border-radius:6px;overflow:hidden;background:var(--card);border:1px solid var(--brd);cursor:pointer;transition:.2s}
+.ac:hover{border-color:var(--cyan)}.ac img{width:100%;aspect-ratio:1.7;object-fit:cover;display:block}
+.acn{font-size:7px;text-align:center;padding:1px 2px;color:var(--txt2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acw{font-size:9px;font-weight:700;text-align:center;padding:1px 0 2px}
+/* Popup */
+.po{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}.po.v{display:flex}
+.pp{background:var(--card);border-radius:16px;padding:20px;max-width:360px;width:90%;border:1px solid var(--brd);position:relative;animation:pi .2s ease}
+@keyframes pi{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.pc{position:absolute;top:10px;right:14px;background:none;border:none;color:var(--txt2);font-size:20px;cursor:pointer}
+.ph{display:flex;gap:14px;margin-bottom:14px}
+.pm{width:80px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0}.pm img{width:100%;height:100%;object-fit:cover}
+.pi h3{font-family:'Orbitron';font-size:13px;margin-bottom:3px}
+.pi .pr{font-size:11px;color:var(--cyan);font-weight:600}.pi .pa{font-size:11px;color:var(--txt2)}
+.pst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.psi{background:var(--bg2);border-radius:8px;padding:8px;text-align:center}
+.psl{font-size:10px;color:var(--txt3);margin-bottom:2px}.psv{font-size:16px;font-weight:700}
+.psub{font-size:10px;color:var(--txt3);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.ptg{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.pt{padding:3px 8px;border-radius:12px;font-size:10px;font-weight:600;background:var(--bg2);color:var(--txt2);border:1px solid var(--brd)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-logo">D2</div>
+    <div><h1>DOTA HELPER</h1><span>Патч 7.41a — Дота-помощник</span></div>
+  </div>
+  <div class="page a" id="p-meta">
+    <div class="wb"><h2>🏰 Dota 2 Helper</h2><p>Мета 7.41a • Драфтер • Подбор героя</p></div>
+    <div class="rf" id="rf"></div>
+    <div id="meta"></div>
+  </div>
+  <div class="page" id="p-draft">
+    <div class="st"><span>⚔️</span> ДРАФТЕР</div>
+    <div class="mt"><button class="mb a" onclick="sdt('r')">🟢 Radiant</button><button class="mb" onclick="sdt('d')">🔴 Dire</button></div>
+    <div class="tr"><div class="tl r">СВЕТ</div><div class="ps" id="rs"></div></div>
+    <div class="tr"><div class="tl d">ТЬМА</div><div class="ps" id="ds"></div></div>
+    <input class="hs" placeholder="🔍 Найти героя..." id="dsrch" oninput="rdh()">
+    <div class="sg" id="dhg"></div>
+    <div class="rec" id="drec" style="display:none"><div class="rct">💡 Рекомендации</div><div id="rl"></div></div>
+  </div>
+  <div class="page" id="p-quiz">
+    <div class="st"><span>🎯</span> ПОДБОР ГЕРОЯ</div>
+    <div id="qz"></div>
+  </div>
+  <div class="page" id="p-heroes">
+    <div class="st"><span>🦸</span> ВСЕ ГЕРОИ <span class="pb" id="hcnt"></span></div>
+    <input class="hs" placeholder="🔍 Поиск героя..." id="hsrch" oninput="rah()">
+    <div class="ag" id="ahg"></div>
+  </div>
+  <div class="nav">
+    <button class="nb a" onclick="sp('meta')"><span class="ni">📊</span>Мета</button>
+    <button class="nb" onclick="sp('draft')"><span class="ni">⚔️</span>Драфт</button>
+    <button class="nb" onclick="sp('quiz')"><span class="ni">🎯</span>Квиз</button>
+    <button class="nb" onclick="sp('heroes')"><span class="ni">🦸</span>Герои</button>
+  </div>
+</div>
+<div class="po" id="pop" onclick="if(event.target===this)this.classList.remove('v')"><div class="pp" id="ppc"></div></div>
+
+<script>
+// Valve CDN key mapping (npc_dota_hero_ names from Steam API)
+const VK={lifestealer:"life_stealer",wraith_king:"skeleton_king",anti_mage:"antimage",
+shadow_fiend:"nevermore",nature_prophet:"furion",necrolyte:"necrolyte",
+outworld_destroyer:"obsidian_destroyer",queen_of_pain:"queenofpain",
+clockwerk:"rattletrap",underlord:"abyssal_underlord",zeus:"zuus",io:"wisp",
+doom_bringer:"doom_bringer",windrunner:"windrunner",treant:"treant",
+vengeful_spirit:"vengefulspirit",centaur:"centaur_warrunner"};
+const vk=k=>VK[k]||k;
+// CDN URLs — multiple fallbacks (will work on GitHub Pages, blocked in iframe preview)
+const CDNS=[
+  k=>`https://cdn.akamai.steamstatic.com/apps/dota2/images/dota_react/heroes/${vk(k)}.png`,
+  k=>`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${vk(k)}.png`,
+  k=>`https://cdn.dota2.com/apps/dota2/images/heroes/${vk(k)}_lg.png`,
+];
+const IMG=k=>CDNS[0](k);
+// Color map by attribute
+const ACOL={str:'linear-gradient(135deg,#8b2020,#c0392b)',agi:'linear-gradient(135deg,#1a6b2a,#27ae60)',int:'linear-gradient(135deg,#1a3a6b,#2980b9)',uni:'linear-gradient(135deg,#6b3a8b,#8e44ad)'};
+function heroInitials(k){
+  const h=byK(k);if(!h)return'?';
+  const words=h.n.split(' ');
+  if(words.length>=2)return(words[0][0]+words[1][0]).toUpperCase();
+  return h.n.substring(0,2).toUpperCase();
+}
+function imgErr(el,k){
+  const t=parseInt(el.dataset.try||'0')+1;
+  if(t<CDNS.length){el.dataset.try=t;el.src=CDNS[t](k);return}
+  // Fallback: colored avatar with hero initials
+  const h=byK(k);
+  const col=h?ACOL[h.a]||ACOL.uni:ACOL.uni;
+  const ini=heroInitials(k);
+  const p=el.parentElement;
+  p.innerHTML=`<div style="width:100%;height:100%;background:${col};display:flex;align-items:center;justify-content:center;font-family:Orbitron,sans-serif;font-weight:900;font-size:14px;color:rgba(255,255,255,.85);text-shadow:0 1px 3px rgba(0,0,0,.5);letter-spacing:1px">${ini}</div>`;
+}
+
+// ===== ALL HEROES — ROLES FIXED FROM DOTABUFF 7.41a SCREENSHOT =====
+// Roles: carry=pos1, mid=pos2, offlane=pos3, sup4=pos4, sup5=pos5
+// WR data from Dotabuff 7.41a (user's screenshot + search results)
+const H=[
+// === TOP BY DOTABUFF (from screenshot) ===
+// S-tier overall: Meepo 56.31, Spectre 56.15, Tidehunter 54.59, WK 54.25, LS 52.62, LC 52.41, Axe 52.39, PL 52.51, Necro 52.38, SS 52.00, NS 52.91, Slark 51.73, Phoenix 53.23, SB 51.32, Riki 52.96, Techies 52.06, WD 51.47, Sniper 50.54, BS 53.06, Dawn 52.72
+
+// CARRY (pos 1)
+{k:"spectre",n:"Spectre",a:"agi",rl:"carry",wr:56.15,pr:9,tags:["global","lategame"],cnt:["Anti-Mage","Spirit Vessel"],syn:["Zeus","Warlock"]},
+{k:"wraith_king",n:"Wraith King",a:"str",rl:"carry",wr:54.25,pr:14,tags:["lategame","tank","farm"],cnt:["Anti-Mage","Diffusal"],syn:["Magnus","Dazzle"]},
+{k:"lifestealer",n:"Lifestealer",a:"str",rl:"carry",wr:52.62,pr:16,tags:["bkb","lifesteal","melee","tank"],cnt:["Halberd","Razor"],syn:["Slardar","Magnus"]},
+{k:"phantom_lancer",n:"Phantom Lancer",a:"agi",rl:"carry",wr:52.51,pr:7,tags:["illusion","lategame","farm"],cnt:["Earthshaker","Ember Spirit"],syn:["KOTL","Magnus"]},
+{k:"slark",n:"Slark",a:"agi",rl:"carry",wr:51.73,pr:9,tags:["mobility","steal","lategame"],cnt:["Bloodseeker","Axe"],syn:["Dazzle","Oracle"]},
+{k:"riki",n:"Riki",a:"agi",rl:"carry",wr:52.96,pr:8,tags:["invis","ganker","burst"],cnt:["Sentry","Dust"],syn:["Bane","Dazzle"]},
+{k:"phantom_assassin",n:"Phantom Assassin",a:"agi",rl:"carry",wr:52.2,pr:18,tags:["burst","melee","lategame"],cnt:["Axe","MKB"],syn:["Magnus","Dazzle"]},
+{k:"juggernaut",n:"Juggernaut",a:"agi",rl:"carry",wr:51.8,pr:13,tags:["heal","versatile","melee"],cnt:["Ghost Scepter","Axe"],syn:["Crystal Maiden","Shadow Shaman"]},
+{k:"ursa",n:"Ursa",a:"agi",rl:"carry",wr:51.5,pr:9,tags:["burst","roshan","melee"],cnt:["Winter Wyvern","Ghost Scepter"],syn:["Io","Magnus"]},
+{k:"chaos_knight",n:"Chaos Knight",a:"str",rl:"carry",wr:51.2,pr:6,tags:["burst","illusion"],cnt:["Earthshaker","Ember Spirit"],syn:["Io","Dazzle"]},
+{k:"terrorblade",n:"Terrorblade",a:"agi",rl:"carry",wr:51.0,pr:5,tags:["illusion","push","lategame"],cnt:["Earthshaker","Lion"],syn:["Dazzle","Oracle"]},
+{k:"faceless_void",n:"Faceless Void",a:"agi",rl:"carry",wr:49.5,pr:9,tags:["disable","lategame"],cnt:["Vengeful Spirit","Silencer"],syn:["Invoker","Witch Doctor"]},
+{k:"anti_mage",n:"Anti-Mage",a:"agi",rl:"carry",wr:50.8,pr:10,tags:["farm","mobility"],cnt:["Axe","Bloodseeker"],syn:["Magnus","Crystal Maiden"]},
+{k:"medusa",n:"Medusa",a:"agi",rl:"carry",wr:49.5,pr:5,tags:["lategame","tank"],cnt:["Anti-Mage","Diffusal"],syn:["Magnus","Dazzle"]},
+{k:"troll_warlord",n:"Troll Warlord",a:"agi",rl:"carry",wr:50.5,pr:5,tags:["bash","melee"],cnt:["Winter Wyvern","Ghost Scepter"],syn:["Magnus","Dazzle"]},
+{k:"sven",n:"Sven",a:"str",rl:"carry",wr:49.8,pr:5,tags:["burst","cleave"],cnt:["Ghost Scepter","WW"],syn:["Magnus","Grimstroke"]},
+{k:"drow_ranger",n:"Drow Ranger",a:"agi",rl:"carry",wr:50.2,pr:8,tags:["ranged","push"],cnt:["Spirit Breaker","PA"],syn:["VS","Slardar"]},
+{k:"naga_siren",n:"Naga Siren",a:"agi",rl:"carry",wr:50.2,pr:4,tags:["illusion","split"],cnt:["Earthshaker","Ember Spirit"],syn:["Disruptor","Shadow Shaman"]},
+{k:"luna",n:"Luna",a:"agi",rl:"carry",wr:49.2,pr:5,tags:["push","aura"],cnt:["PA","Spectre"],syn:["Magnus","SS"]},
+{k:"morphling",n:"Morphling",a:"agi",rl:"carry",wr:48.5,pr:4,tags:["burst","versatile"],cnt:["Ancient Apparition","Spirit Vessel"],syn:["ES","Tusk"]},
+{k:"gyrocopter",n:"Gyrocopter",a:"agi",rl:"carry",wr:49.8,pr:5,tags:["teamfight","ranged"],cnt:["Anti-Mage","BKB"],syn:["Io","Magnus"]},
+{k:"monkey_king",n:"Monkey King",a:"agi",rl:"carry",wr:50.5,pr:8,tags:["melee","teamfight"],cnt:["Axe","Timbersaw"],syn:["Grimstroke","Shadow Shaman"]},
+{k:"lone_druid",n:"Lone Druid",a:"uni",rl:"carry",wr:49.5,pr:2,tags:["push","micro"],cnt:["MKB","Axe"],syn:["Dazzle","Magnus"]},
+{k:"arc_warden",n:"Arc Warden",a:"agi",rl:"carry",wr:48.5,pr:3,tags:["push","split"],cnt:["Spirit Breaker","BM"],syn:["Magnus","Dazzle"]},
+{k:"clinkz",n:"Clinkz",a:"agi",rl:"carry",wr:50.5,pr:5,tags:["push","burst"],cnt:["Spirit Vessel","Ghost Scepter"],syn:["Drow Ranger","VS"]},
+{k:"weaver",n:"Weaver",a:"agi",rl:"carry",wr:50.5,pr:5,tags:["mobility","damage"],cnt:["Axe","Bloodseeker"],syn:["Grimstroke","WD"]},
+{k:"muerta",n:"Muerta",a:"uni",rl:"carry",wr:49.5,pr:5,tags:["burst","ranged"],cnt:["BKB","PA"],syn:["Shadow Demon","Bane"]},
+{k:"kez",n:"Kez",a:"uni",rl:"carry",wr:50.5,pr:4,tags:["burst","mobility"],cnt:["Ghost Scepter","Halberd"],syn:["Magnus","Dazzle"]},
+{k:"razor",n:"Razor",a:"agi",rl:"carry",wr:50.5,pr:5,tags:["anti-carry","push"],cnt:["BKB","Anti-Mage"],syn:["Dazzle","CM"]},
+
+// MID (pos 2) — Meepo is MID not carry!
+{k:"meepo",n:"Meepo",a:"agi",rl:"mid",wr:56.31,pr:4,tags:["micro","tempo","burst","farm"],cnt:["Earthshaker","Sven"],syn:["Bane","Dazzle"]},
+{k:"huskar",n:"Huskar",a:"str",rl:"mid",wr:52.5,pr:5,tags:["aggro","heal","burst"],cnt:["Ancient Apparition","Necrophos"],syn:["Dazzle","Oracle"]},
+{k:"leshrac",n:"Leshrac",a:"int",rl:"mid",wr:52.5,pr:6,tags:["push","damage","burst"],cnt:["BKB","Anti-Mage"],syn:["Enigma","FV"]},
+{k:"bloodseeker",n:"Bloodseeker",a:"agi",rl:"mid",wr:53.06,pr:8,tags:["ganker","heal","farm"],cnt:["TP Scroll","Eul"],syn:["Invoker","Zeus"]},
+{k:"ember_spirit",n:"Ember Spirit",a:"agi",rl:"mid",wr:51.5,pr:9,tags:["mobility","magic","versatile"],cnt:["Silencer","Anti-Mage"],syn:["Magnus","Enigma"]},
+{k:"zeus",n:"Zeus",a:"int",rl:"mid",wr:51.8,pr:9,tags:["global","burst","damage"],cnt:["BKB","Pipe"],syn:["Spectre","NP"]},
+{k:"void_spirit",n:"Void Spirit",a:"uni",rl:"mid",wr:50.2,pr:8,tags:["mobility","burst"],cnt:["Silencer","Doom"],syn:["Enigma","FV"]},
+{k:"storm_spirit",n:"Storm Spirit",a:"int",rl:"mid",wr:49.5,pr:6,tags:["mobility","ganker"],cnt:["Silencer","Doom"],syn:["Io","CM"]},
+{k:"invoker",n:"Invoker",a:"int",rl:"mid",wr:49.2,pr:11,tags:["versatile","combo"],cnt:["Nyx Assassin","Anti-Mage"],syn:["FV","Dark Seer"]},
+{k:"shadow_fiend",n:"Shadow Fiend",a:"agi",rl:"mid",wr:48.5,pr:8,tags:["farm","damage"],cnt:["Spirit Breaker","Tinker"],syn:["Magnus","Shadow Shaman"]},
+{k:"queen_of_pain",n:"Queen of Pain",a:"int",rl:"mid",wr:49.2,pr:7,tags:["burst","mobility"],cnt:["Anti-Mage","Nyx"],syn:["FV","Enigma"]},
+{k:"puck",n:"Puck",a:"int",rl:"mid",wr:49.5,pr:7,tags:["initiator","mobility","disable"],cnt:["Silencer","Anti-Mage"],syn:["FV","Enigma"]},
+{k:"lina",n:"Lina",a:"int",rl:"mid",wr:50.2,pr:9,tags:["burst","ranged","damage"],cnt:["Huskar","Anti-Mage"],syn:["Shadow Demon","Bane"]},
+{k:"templar_assassin",n:"Templar Assassin",a:"agi",rl:"mid",wr:47.5,pr:6,tags:["burst","tempo"],cnt:["Viper","Venomancer"],syn:["Magnus","Slardar"]},
+{k:"death_prophet",n:"Death Prophet",a:"int",rl:"mid",wr:49.8,pr:5,tags:["push","tank"],cnt:["Anti-Mage","Nyx"],syn:["Grimstroke","Mars"]},
+{k:"tinker",n:"Tinker",a:"int",rl:"mid",wr:42.5,pr:5,tags:["push","damage"],cnt:["Spirit Breaker","BKB"],syn:["FV","Enigma"]},
+{k:"outworld_destroyer",n:"OD",a:"int",rl:"mid",wr:48.5,pr:3,tags:["disable","burst"],cnt:["BKB","Nyx"],syn:["FV","Enigma"]},
+{k:"alchemist",n:"Alchemist",a:"str",rl:"mid",wr:50.2,pr:8,tags:["farm","push"],cnt:["Ancient Apparition","Spirit Vessel"],syn:["Io","Magnus"]},
+{k:"sniper",n:"Sniper",a:"agi",rl:"mid",wr:50.54,pr:19,tags:["ranged","siege","damage"],cnt:["Spirit Breaker","PA"],syn:["Dazzle","Oracle"]},
+{k:"dragon_knight",n:"Dragon Knight",a:"str",rl:"mid",wr:50.5,pr:8,tags:["push","tank"],cnt:["Viper","Razor"],syn:["Shadow Shaman","Jakiro"]},
+{k:"kunkka",n:"Kunkka",a:"str",rl:"mid",wr:51.2,pr:7,tags:["initiator","cleave","burst"],cnt:["Puck","Weaver"],syn:["Shadow Demon","Tide"]},
+{k:"batrider",n:"Batrider",a:"uni",rl:"mid",wr:53.5,pr:5,tags:["initiator","catch"],cnt:["Linken","BKB"],syn:["Invoker","FV"]},
+{k:"windrunner",n:"Windranger",a:"uni",rl:"mid",wr:47.5,pr:6,tags:["burst","mobility"],cnt:["MKB","PA"],syn:["Grimstroke","Mars"]},
+{k:"necrolyte",n:"Necrophos",a:"int",rl:"mid",wr:52.38,pr:13,tags:["heal","tank"],cnt:["Anti-Mage","Spirit Vessel"],syn:["Axe","LC"]},
+
+// OFFLANE (pos 3) — Night Stalker is OFFLANE!
+{k:"night_stalker",n:"Night Stalker",a:"str",rl:"offlane",wr:52.91,pr:8,tags:["ganker","vision","tank"],cnt:["Winter Wyvern","Razor"],syn:["Bane","Dazzle"]},
+{k:"doom_bringer",n:"Doom",a:"str",rl:"offlane",wr:53.9,pr:10,tags:["disable","tank"],cnt:["Lifestealer","Juggernaut"],syn:["Bane","Shadow Demon"]},
+{k:"legion_commander",n:"Legion Commander",a:"str",rl:"offlane",wr:52.41,pr:17,tags:["duel","damage","tank"],cnt:["Winter Wyvern","Oracle"],syn:["Io","Dazzle"]},
+{k:"phoenix",n:"Phoenix",a:"str",rl:"offlane",wr:53.23,pr:7,tags:["teamfight","heal"],cnt:["Silencer","Sniper"],syn:["Enigma","Tidehunter"]},
+{k:"bristleback",n:"Bristleback",a:"str",rl:"offlane",wr:53.5,pr:9,tags:["tank","damage"],cnt:["Viper","Silver Edge"],syn:["Io","Warlock"]},
+{k:"tidehunter",n:"Tidehunter",a:"str",rl:"offlane",wr:54.59,pr:12,tags:["initiator","teamfight","tank"],cnt:["Lifestealer","Ursa"],syn:["Enigma","Invoker"]},
+{k:"axe",n:"Axe",a:"str",rl:"offlane",wr:52.39,pr:15,tags:["initiator","tank"],cnt:["Lifestealer","Timbersaw"],syn:["Shadow Demon","Skywrath Mage"]},
+{k:"enigma",n:"Enigma",a:"int",rl:"offlane",wr:53.5,pr:6,tags:["teamfight","push"],cnt:["Silencer","Rubick"],syn:["FV","Tidehunter"]},
+{k:"mars",n:"Mars",a:"str",rl:"offlane",wr:50.8,pr:9,tags:["initiator","teamfight"],cnt:["Lifestealer","Juggernaut"],syn:["Invoker","Witch Doctor"]},
+{k:"centaur",n:"Centaur",a:"str",rl:"offlane",wr:51.9,pr:7,tags:["initiator","tank"],cnt:["Slark","Lifestealer"],syn:["Io","NP"]},
+{k:"underlord",n:"Underlord",a:"str",rl:"offlane",wr:53.2,pr:6,tags:["aura","tank","push"],cnt:["Lifestealer","Diffusal"],syn:["Spectre","Zeus"]},
+{k:"sand_king",n:"Sand King",a:"uni",rl:"offlane",wr:51.5,pr:7,tags:["initiator","teamfight"],cnt:["BKB","Lifestealer"],syn:["Enigma","FV"]},
+{k:"slardar",n:"Slardar",a:"str",rl:"offlane",wr:51.2,pr:6,tags:["initiator","armor"],cnt:["Lifestealer","Phoenix"],syn:["TA","Drow Ranger"]},
+{k:"beastmaster",n:"Beastmaster",a:"str",rl:"offlane",wr:51.5,pr:6,tags:["push","vision"],cnt:["Earthshaker","Axe"],syn:["Invoker","Drow Ranger"]},
+{k:"primal_beast",n:"Primal Beast",a:"str",rl:"offlane",wr:50.5,pr:7,tags:["initiator","tank"],cnt:["Lifestealer","BKB"],syn:["Grimstroke","Shadow Shaman"]},
+{k:"dark_seer",n:"Dark Seer",a:"int",rl:"offlane",wr:50.5,pr:4,tags:["utility","teamfight"],cnt:["Oracle","Rubick"],syn:["FV","Sven"]},
+{k:"pangolier",n:"Pangolier",a:"agi",rl:"offlane",wr:49.5,pr:7,tags:["initiator","mobility"],cnt:["Silencer","BKB"],syn:["Enigma","Mars"]},
+{k:"brewmaster",n:"Brewmaster",a:"str",rl:"offlane",wr:51.8,pr:4,tags:["teamfight","split"],cnt:["Silencer","AA"],syn:["Dazzle","WD"]},
+{k:"dawnbreaker",n:"Dawnbreaker",a:"str",rl:"offlane",wr:52.72,pr:8,tags:["global","heal","tank"],cnt:["AA","Spirit Vessel"],syn:["Spectre","Zeus"]},
+{k:"viper",n:"Viper",a:"agi",rl:"offlane",wr:50.8,pr:6,tags:["anti-carry","lane"],cnt:["BKB","PA"],syn:["Axe","LC"]},
+{k:"lycan",n:"Lycan",a:"str",rl:"offlane",wr:50.5,pr:3,tags:["push","summon"],cnt:["Axe","Earthshaker"],syn:["Beastmaster","NP"]},
+{k:"broodmother",n:"Broodmother",a:"uni",rl:"offlane",wr:50.2,pr:3,tags:["push","micro"],cnt:["Earthshaker","Axe"],syn:["Drow Ranger","VS"]},
+{k:"nature_prophet",n:"furion",rl:"offlane",a:"int",wr:49.5,pr:5,tags:["push","split"],cnt:["Spirit Breaker","BH"],syn:["Spectre","Zeus"]},
+
+// SUPPORT 4 (pos 4)
+{k:"spirit_breaker",n:"Spirit Breaker",a:"str",rl:"sup4",wr:51.32,pr:20,tags:["roamer","ganker","tank"],cnt:["Linken","BKB"],syn:["Invoker","Lina"]},
+{k:"techies",n:"Techies",a:"int",rl:"sup4",wr:52.06,pr:11,tags:["damage","zone"],cnt:["BKB","Pipe"],syn:["FV","Enigma"]},
+{k:"pudge",n:"Pudge",a:"str",rl:"sup4",wr:49.5,pr:28,tags:["catch","tank"],cnt:["Lifestealer","BKB"],syn:["Techies","AA"]},
+{k:"rubick",n:"Rubick",a:"int",rl:"sup4",wr:50.5,pr:9,tags:["versatile","steal"],cnt:["Silencer","Nyx"],syn:["Enigma","Tidehunter"]},
+{k:"earth_spirit",n:"Earth Spirit",a:"str",rl:"sup4",wr:48.5,pr:5,tags:["initiator","ganker"],cnt:["Silencer","Oracle"],syn:["Ursa","Lifestealer"]},
+{k:"clockwerk",n:"Clockwerk",a:"str",rl:"sup4",wr:50.8,pr:7,tags:["initiator","catch"],cnt:["Lifestealer","Slark"],syn:["Skywrath Mage","Invoker"]},
+{k:"earthshaker",n:"Earthshaker",a:"str",rl:"sup4",wr:50.3,pr:9,tags:["initiator","teamfight"],cnt:["Silencer","BKB"],syn:["Enigma","Tidehunter"]},
+{k:"tusk",n:"Tusk",a:"str",rl:"sup4",wr:50.2,pr:8,tags:["ganker","save"],cnt:["Linken","BKB"],syn:["TA","Drow Ranger"]},
+{k:"hoodwink",n:"Hoodwink",a:"agi",rl:"sup4",wr:51.5,pr:7,tags:["burst","utility"],cnt:["Spirit Breaker","BKB"],syn:["Mars","FV"]},
+{k:"nyx_assassin",n:"Nyx Assassin",a:"agi",rl:"sup4",wr:50.8,pr:5,tags:["ganker","catch"],cnt:["Sentry","Gem"],syn:["Invoker","Lina"]},
+{k:"mirana",n:"Mirana",a:"agi",rl:"sup4",wr:49.5,pr:7,tags:["roamer","stun"],cnt:["Slardar","BH"],syn:["Bane","Shadow Demon"]},
+{k:"bounty_hunter",n:"Bounty Hunter",a:"agi",rl:"sup4",wr:51.2,pr:7,tags:["roamer","track"],cnt:["Sentry","Dust"],syn:["Zeus","NP"]},
+{k:"marci",n:"Marci",a:"uni",rl:"sup4",wr:50.8,pr:8,tags:["burst","mobility"],cnt:["Halberd","Ghost Scepter"],syn:["TA","Drow Ranger"]},
+{k:"snapfire",n:"Snapfire",a:"str",rl:"sup4",wr:50.8,pr:8,tags:["damage","save"],cnt:["BKB","Lifestealer"],syn:["Enigma","FV"]},
+{k:"dark_willow",n:"Dark Willow",a:"int",rl:"sup4",wr:49.8,pr:4,tags:["disable","burst"],cnt:["BKB","Silencer"],syn:["FV","Mars"]},
+{k:"pugna",n:"Pugna",a:"int",rl:"sup4",wr:51.5,pr:4,tags:["push","heal"],cnt:["Nyx","BKB"],syn:["Skywrath Mage","Zeus"]},
+{k:"skywrath_mage",n:"Skywrath Mage",a:"int",rl:"sup4",wr:50.2,pr:6,tags:["burst","lane"],cnt:["BKB","Pipe"],syn:["FV","Axe"]},
+{k:"venomancer",n:"Venomancer",a:"agi",rl:"sup4",wr:51.5,pr:6,tags:["damage","push"],cnt:["Pipe","BKB"],syn:["Bristleback","Viper"]},
+{k:"ringmaster",n:"Ringmaster",a:"uni",rl:"sup4",wr:49.8,pr:4,tags:["disable","utility"],cnt:["BKB","Manta"],syn:["FV","Enigma"]},
+{k:"largo",n:"Largo",a:"uni",rl:"sup4",wr:49.5,pr:3,tags:["utility","teamfight"],cnt:["BKB","Silencer"],syn:["FV","Enigma"]},
+{k:"elder_titan",n:"Elder Titan",a:"str",rl:"sup4",wr:49.8,pr:3,tags:["aura","teamfight"],cnt:["BKB","Lifestealer"],syn:["FV","Enigma"]},
+
+// SUPPORT 5 (pos 5)
+{k:"jakiro",n:"Jakiro",a:"int",rl:"sup5",wr:53.5,pr:10,tags:["push","disable"],cnt:["BKB","Pipe"],syn:["FV","Enigma"]},
+{k:"warlock",n:"Warlock",a:"int",rl:"sup5",wr:53.5,pr:8,tags:["teamfight","heal"],cnt:["Diffusal","Anti-Mage"],syn:["Spectre","FV"]},
+{k:"lich",n:"Lich",a:"int",rl:"sup5",wr:53.2,pr:9,tags:["lane","slow","disable"],cnt:["BKB","Pipe"],syn:["PA","Slark"]},
+{k:"shadow_shaman",n:"Shadow Shaman",a:"int",rl:"sup5",wr:52.0,pr:16,tags:["push","disable"],cnt:["Nyx","BKB"],syn:["Juggernaut","Ursa"]},
+{k:"chen",n:"Chen",a:"uni",rl:"sup5",wr:52.5,pr:3,tags:["push","heal","micro"],cnt:["Earthshaker","Axe"],syn:["Huskar","Bristleback"]},
+{k:"witch_doctor",n:"Witch Doctor",a:"int",rl:"sup5",wr:51.47,pr:16,tags:["heal","damage"],cnt:["Spirit Breaker","Clockwerk"],syn:["Mars","FV"]},
+{k:"crystal_maiden",n:"Crystal Maiden",a:"int",rl:"sup5",wr:52.0,pr:11,tags:["aura","disable"],cnt:["Spirit Breaker","Clockwerk"],syn:["Juggernaut","Anti-Mage"]},
+{k:"ogre_magi",n:"Ogre Magi",a:"str",rl:"sup5",wr:52.1,pr:10,tags:["buff","tank"],cnt:["Nyx","Diffusal"],syn:["PA","WK"]},
+{k:"dazzle",n:"Dazzle",a:"int",rl:"sup5",wr:51.5,pr:8,tags:["save","heal"],cnt:["Axe","Ancient Apparition"],syn:["Huskar","PA"]},
+{k:"abaddon",n:"Abaddon",a:"str",rl:"sup5",wr:52.1,pr:7,tags:["save","heal"],cnt:["Ancient Apparition","Axe"],syn:["Huskar","PA"]},
+{k:"omniknight",n:"Omniknight",a:"str",rl:"sup5",wr:51.5,pr:6,tags:["save","heal"],cnt:["Diffusal","Invoker"],syn:["PA","Sven"]},
+{k:"winter_wyvern",n:"Winter Wyvern",a:"uni",rl:"sup5",wr:51.5,pr:5,tags:["save","teamfight"],cnt:["BKB","Force Staff"],syn:["FV","Enigma"]},
+{k:"ancient_apparition",n:"Ancient Apparition",a:"int",rl:"sup5",wr:51.5,pr:6,tags:["anti-heal","global"],cnt:["BKB","Anti-Mage"],syn:["Spectre","Zeus"]},
+{k:"lion",n:"Lion",a:"int",rl:"sup5",wr:49.8,pr:14,tags:["disable","burst"],cnt:["BKB","Linken"],syn:["Ursa","Sven"]},
+{k:"bane",n:"Bane",a:"uni",rl:"sup5",wr:51.8,pr:5,tags:["disable","catch"],cnt:["Linken","BKB"],syn:["Mirana","PA"]},
+{k:"vengeful_spirit",n:"Vengeful Spirit",a:"agi",rl:"sup5",wr:51.2,pr:7,tags:["aura","save"],cnt:["Linken","BKB"],syn:["Drow Ranger","Slardar"]},
+{k:"disruptor",n:"Disruptor",a:"int",rl:"sup5",wr:50.5,pr:5,tags:["catch","teamfight"],cnt:["BKB","Linken"],syn:["FV","Enigma"]},
+{k:"treant",n:"Treant Protector",a:"str",rl:"sup5",wr:51.5,pr:4,tags:["heal","vision"],cnt:["Quelling Blade","Zeus"],syn:["Spectre","Huskar"]},
+{k:"undying",n:"Undying",a:"str",rl:"sup5",wr:51.8,pr:7,tags:["lane","heal"],cnt:["Diffusal","Anti-Mage"],syn:["Bristleback","Axe"]},
+{k:"grimstroke",n:"Grimstroke",a:"int",rl:"sup5",wr:50.5,pr:5,tags:["disable","combo"],cnt:["BKB","Manta Style"],syn:["Mars","LC"]},
+{k:"silencer",n:"Silencer",a:"int",rl:"sup5",wr:51.5,pr:6,tags:["teamfight","steal"],cnt:["BKB","Manta Style"],syn:["FV","Enigma"]},
+{k:"shadow_demon",n:"Shadow Demon",a:"int",rl:"sup5",wr:49.2,pr:4,tags:["save","combo"],cnt:["BKB","Manta Style"],syn:["Mirana","Kunkka"]},
+{k:"oracle",n:"Oracle",a:"int",rl:"sup5",wr:49.5,pr:5,tags:["save","heal"],cnt:["Ancient Apparition","Spirit Vessel"],syn:["Huskar","PA"]},
+{k:"io",n:"Io",a:"uni",rl:"sup5",wr:46.5,pr:3,tags:["save","global"],cnt:["AA","Spirit Vessel"],syn:["Gyrocopter","Tiny"]},
+{k:"enchantress",n:"Enchantress",a:"int",rl:"sup5",wr:50.2,pr:4,tags:["push","heal"],cnt:["Silver Edge","MKB"],syn:["Lycan","Beastmaster"]},
+{k:"keeper_of_the_light",n:"KOTL",a:"int",rl:"sup5",wr:50.5,pr:5,tags:["mana","push"],cnt:["Nyx","Anti-Mage"],syn:["PL","Bristleback"]},
+];
+
+const ROLES={carry:{l:"КЕРРИ",i:"⚔️"},mid:{l:"МИД",i:"🎯"},offlane:{l:"ОФФЛЕЙН",i:"🛡️"},sup4:{l:"ЧЕТВЁРКА",i:"🔮"},sup5:{l:"ПЯТЁРКА",i:"💚"}};
+
+// ===== HELPERS =====
+function wc(w){return w>=53?'h':w>=50?'m':'l'}
+function byK(k){return H.find(h=>h.k===k)}
+
+// ===== META =====
+function initRF(){
+  document.getElementById('rf').innerHTML=["Все","Herald","Guardian","Crusader","Archon","Legend","Ancient","Divine","Immortal"].map((r,i)=>
+    `<button class="rb${i===0?' a':''}" onclick="selRank(this,${i})">${r}</button>`
+  ).join('');
+}
+// Rank adjustments — lower ranks have different meta
+const RANK_ADJ={
+  0:{},// Все — без изменений
+  1:{spectre:-3,meepo:-8,wraith_king:+2,sniper:+4,phantom_assassin:+3,bristleback:+2,ogre_magi:+2,lich:+2,riki:+3,bloodseeker:+2},// Herald
+  2:{spectre:-2,meepo:-6,wraith_king:+1,sniper:+3,phantom_assassin:+2,bristleback:+1,ogre_magi:+1,lich:+1,riki:+2},// Guardian
+  3:{spectre:-1,meepo:-4,sniper:+2,phantom_assassin:+1,riki:+1},// Crusader
+  4:{meepo:-2,sniper:+1},// Archon
+  5:{},// Legend
+  6:{meepo:+1,invoker:+1,earth_spirit:+2},// Ancient
+  7:{meepo:+2,invoker:+2,earth_spirit:+3,doom_bringer:+2,io:+4,chen:+2},// Divine
+  8:{meepo:+3,invoker:+3,earth_spirit:+4,doom_bringer:+3,io:+5,chen:+3,riki:-4,sniper:-3,phantom_assassin:-2,bloodseeker:-2},// Immortal
+};
+let curRank=0;
+function selRank(btn,idx){
+  document.querySelectorAll('.rb').forEach(b=>b.classList.remove('a'));
+  btn.classList.add('a');
+  curRank=idx;
+  renderMeta();
+}
+function getWR(h){
+  const adj=RANK_ADJ[curRank]||{};
+  return Math.round((h.wr+(adj[h.k]||0))*100)/100;
+}
+function renderMeta(){
+  const c=document.getElementById('meta');
+  const rankNames=["","Herald","Guardian","Crusader","Archon","Legend","Ancient","Divine","Immortal"];
+  const rankLabel=curRank>0?` • ${rankNames[curRank]}`:'';
+  c.innerHTML=Object.entries(ROLES).map(([r,info])=>{
+    const heroes=H.filter(h=>h.rl===r).map(h=>({...h,adjWr:getWR(h)})).sort((a,b)=>b.adjWr-a.adjWr).slice(0,5);
+    return `<div class="st"><span>${info.i}</span> ${info.l}<span class="pb">7.41a${rankLabel}</span></div>
+    <div class="hg">${heroes.map(h=>`<div class="hc" onclick="showH('${h.k}')">
+      <div class="ha"><img src="${IMG(h.k)}" onerror="imgErr(this,'${h.k}')" data-try="0" loading="lazy"></div>
+      <div class="hn">${h.n}</div>
+      <div class="hw ${wc(h.adjWr)}">${h.adjWr}%</div>
+    </div>`).join('')}</div>`;
+  }).join('');
+}
+
+// ===== DRAFTER =====
+let D={r:[null,null,null,null,null],d:[null,null,null,null,null],t:'r',s:null};
+function sdt(t){D.t=t;document.querySelectorAll('#p-draft .mb').forEach((b,i)=>b.classList.toggle('a',(i===0&&t==='r')||(i===1&&t==='d')))}
+function rsl(){
+  ['r','d'].forEach(t=>{
+    document.getElementById(t+'s').innerHTML=D[t].map((h,i)=>{
+      if(h)return`<div class="sl f" onclick="D.t='${t}';D.s=${i}"><img src="${IMG(h.k)}" onerror="imgErr(this,'${h.k}')" data-try="0"><button class="x" onclick="event.stopPropagation();D['${t}'][${i}]=null;rsl();rdh();urec()">×</button></div>`;
+      return`<div class="sl" onclick="D.t='${t}';D.s=${i}">+</div>`;
+    }).join('');
+  });
+}
+function pkd(){return[...D.r,...D.d].filter(Boolean).map(h=>h.k)}
+function rdh(){
+  const s=document.getElementById('dsrch').value.toLowerCase(),p=pkd();
+  document.getElementById('dhg').innerHTML=H.filter(h=>h.n.toLowerCase().includes(s)).map(h=>
+    `<button class="sp${p.includes(h.k)?' pk':''}" onclick="pickH('${h.k}')"><img src="${IMG(h.k)}" onerror="imgErr(this,'${h.k}')" data-try="0" loading="lazy"></button>`
+  ).join('');
+}
+function pickH(k){
+  const h=byK(k);if(!h)return;let s=D.s;
+  if(s===null||D[D.t][s])s=D[D.t].indexOf(null);
+  if(s===-1)return;D[D.t][s]=h;D.s=null;rsl();rdh();urec();
+}
+function urec(){
+  const el=document.getElementById('drec'),rl=document.getElementById('rl');
+  const et=D.t==='r'?'d':'r',enemies=D[et].filter(Boolean),allies=D[D.t].filter(Boolean),p=pkd();
+  if(!enemies.length&&!allies.length){el.style.display='none';return}
+  el.style.display='block';
+  const av=H.filter(h=>!p.includes(h.k));
+  const sc=av.map(h=>{
+    let s=h.wr,rs=[];
+    enemies.forEach(e=>{if(e.cnt.some(c=>h.n.includes(c)||c.includes(h.n.split(' ')[0]))){s+=5;rs.push('контрит '+e.n.split(' ')[0])}});
+    allies.forEach(a=>{if(a.syn.some(c=>h.n.includes(c)||c.includes(h.n.split(' ')[0]))){s+=4;rs.push('синергия с '+a.n.split(' ')[0])}});
+    return{...h,s,rs};
+  }).sort((a,b)=>b.s-a.s).slice(0,5);
+  rl.innerHTML=sc.map(h=>`<div class="rh">
+    <div class="ri"><img src="${IMG(h.k)}" onerror="imgErr(this,'${h.k}')" data-try="0"></div>
+    <div style="flex:1;min-width:0"><div class="rn">${h.n}</div><div class="rr">${h.rs.length?h.rs.join(', '):'Высокий WR в мете'}</div></div>
+    <div class="rw">${h.wr}%</div>
+  </div>`).join('');
+}
+
+// ===== QUIZ — FIXED: role matching is now the PRIMARY factor =====
+const QZ=[
+  {q:"Какой стиль игры тебе ближе?",o:[
+    {t:"🗡️ Бить сильно, убивать быстро",tg:{burst:3,damage:2}},
+    {t:"🛡️ Танчить и инициировать",tg:{tank:3,initiator:2}},
+    {t:"🧠 Хитрить и перехитрить",tg:{versatile:2,mobility:2,combo:1}},
+    {t:"💚 Помогать команде",tg:{heal:3,save:2,aura:1}},
+  ]},
+  {q:"Ближний или дальний бой?",o:[
+    {t:"⚔️ Ближний — в гущу!",tg:{melee:2,initiator:1}},
+    {t:"🏹 Дальний — безопаснее",tg:{ranged:2,burst:1}},
+  ]},
+  {q:"Что важнее в бою?",o:[
+    {t:"💥 Мгновенный урон",tg:{burst:3}},
+    {t:"🔒 Контроль врагов",tg:{disable:3,catch:1}},
+    {t:"🏃 Мобильность",tg:{mobility:3,ganker:1}},
+    {t:"📈 Фарм и лейтгейм",tg:{farm:3,lategame:2}},
+  ]},
+  {q:"Одиночка или командный?",o:[
+    {t:"🐺 Сам за себя",tg:{farm:2,mobility:1,split:1}},
+    {t:"🤝 Вместе сильнее",tg:{teamfight:3,aura:1,heal:1}},
+  ]},
+  {q:"Какая роль ближе всего?",o:[
+    {t:"⚔️ Керри — нести игру на себе",tg:{_role:"carry"}},
+    {t:"🎯 Мидер — доминировать на линии",tg:{_role:"mid"}},
+    {t:"🛡️ Оффлейн — давить и инициировать",tg:{_role:"offlane"}},
+    {t:"🔮 Саппорт 4 — роумить и ганкать",tg:{_role:"sup4"}},
+    {t:"💚 Саппорт 5 — защищать и помогать",tg:{_role:"sup5"}},
+  ]},
+];
+let qst={step:0,tags:{},role:null};
+function rqz(){
+  const c=document.getElementById('qz');
+  if(qst.step>=QZ.length){showQR();return}
+  const q=QZ[qst.step];
+  c.innerHTML=`<div class="qc">
+    <div class="qp">${QZ.map((_,i)=>`<div class="qd${i<qst.step?' dn':i===qst.step?' cu':''}"></div>`).join('')}</div>
+    <div class="qq">${q.q}</div>
+    ${q.o.map((o,i)=>`<button class="qo" onclick="aqz(${i})">${o.t}</button>`).join('')}
+  </div>`;
+}
+function aqz(i){
+  const q=QZ[qst.step],opt=q.o[i];
+  if(opt.tg._role){qst.role=opt.tg._role}
+  else{Object.entries(opt.tg).forEach(([k,v])=>{qst.tags[k]=(qst.tags[k]||0)+v})}
+  qst.step++;rqz();
+}
+function showQR(){
+  const scored=H.map(h=>{
+    let sc=0;
+    // Role is the MAIN factor (weight 15)
+    if(qst.role && h.rl===qst.role) sc+=15;
+    // Tag matching
+    Object.entries(qst.tags).forEach(([tag,w])=>{if(h.tags.includes(tag))sc+=w});
+    // Small bonus for high WR
+    sc += (h.wr-50)*0.3;
+    return{...h,sc};
+  }).sort((a,b)=>b.sc-a.sc);
+  const best=scored[0],runners=scored.slice(1,4);
+  const descs={carry:"Прирождённый керри! Фармишь, растёшь и решаешь игру.",mid:"Доминируешь на миде и задаёшь темп всей игре!",offlane:"Стена, инициатор, лидер — враги ломаются о тебя.",sup4:"Теневой герой, создающий хаос для врага.",sup5:"Сердце команды. Без тебя победы не будет."};
+  document.getElementById('qz').innerHTML=`<div class="qc qres">
+    <div class="qrh"><img src="${IMG(best.k)}" onerror="imgErr(this,'${best.k}')" data-try="0"></div>
+    <div class="qrn">${best.n}</div>
+    <div class="qrd">${descs[best.rl]||"Отличный выбор для твоего стиля!"}</div>
+    <div style="text-align:left;margin-bottom:14px">
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:6px">Также подойдут:</div>
+      ${runners.map(h=>`<div class="rh"><div class="ri"><img src="${IMG(h.k)}" onerror="imgErr(this,'${h.k}')" data-try="0"></div><div style="flex:1"><div class="rn">${h.n}</div></div><div class="rw">${h.wr}%</div></div>`).join('')}
+    </div>
+    <button class="qrb" onclick="qst={step:0,tags:{},role:null};rqz()">ПРОЙТИ ЗАНОВО</button>
+  </div>`;
+}
+
+// ===== ALL HEROES =====
+function rah(){
+  const s=document.getElementById('hsrch').value.toLowerCase();
+  const f=H.filter(h=>h.n.toLowerCase().includes(s));
+  document.getElementById('hcnt').textContent=f.length+' / '+H.length;
+  document.getElementById('ahg').innerHTML=f.map(h=>`<div class="ac" onclick="showH('${h.k}')">
+    <img src="${IMG(h.k)}" onerror="imgErr(this,'${h.k}')" data-try="0" loading="lazy">
+    <div class="acn">${h.n}</div>
+    <div class="acw" style="color:var(--${wc(h.wr)==='h'?'green':wc(h.wr)==='m'?'gold':'red'})">${h.wr}%</div>
+  </div>`).join('');
+}
+
+// ===== POPUP =====
+function showH(k){
+  const h=byK(k);if(!h)return;
+  const rl=ROLES[h.rl]?ROLES[h.rl].l:h.rl;
+  const an={str:'Сила',agi:'Ловкость',int:'Интеллект',uni:'Универсал'};
+  document.getElementById('ppc').innerHTML=`
+    <button class="pc" onclick="document.getElementById('pop').classList.remove('v')">✕</button>
+    <div class="ph"><div class="pm"><img src="${IMG(h.k)}" onerror="imgErr(this,'${h.k}')" data-try="0"></div>
+    <div class="pi"><h3>${h.n}</h3><div class="pr">${rl}</div><div class="pa">${an[h.a]||h.a}</div></div></div>
+    <div class="pst"><div class="psi"><div class="psl">Винрейт</div><div class="psv" style="color:var(--${wc(h.wr)==='h'?'green':wc(h.wr)==='m'?'gold':'red'})">${h.wr}%</div></div>
+    <div class="psi"><div class="psl">Пикрейт</div><div class="psv">${h.pr}%</div></div></div>
+    <div class="psub">Контрится</div><div class="ptg">${h.cnt.map(c=>`<span class="pt">❌ ${c}</span>`).join('')}</div>
+    <div class="psub">Синергия</div><div class="ptg">${h.syn.map(s=>`<span class="pt">✅ ${s}</span>`).join('')}</div>
+  `;
+  document.getElementById('pop').classList.add('v');
+}
+
+// ===== NAV =====
+function sp(p){
+  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('a'));
+  document.getElementById('p-'+p).classList.add('a');
+  document.querySelectorAll('.nb').forEach((b,i)=>b.classList.toggle('a',['meta','draft','quiz','heroes'][i]===p));
+}
+
+// ===== TELEGRAM =====
+try{if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.expand();Telegram.WebApp.ready()}}catch(e){}
+
+// ===== INIT =====
+initRF();renderMeta();rsl();rdh();rqz();rah();
+</script>
+</body>
+</html>
